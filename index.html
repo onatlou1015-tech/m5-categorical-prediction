@@ -358,7 +358,7 @@
             color: #003757;
         }
 
-        /* ---- NEW: K connection explanation ---- */
+        /* ---- K connection explanation ---- */
         .k-connection {
             background: #f0f7ff;
             border-radius: 24px;
@@ -388,6 +388,34 @@
             background: #dce9f2;
         }
 
+        /* ---- key takeaway cards ---- */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 0.8rem 0 1.2rem 0;
+        }
+        .takeaway-card {
+            background: #f6faff;
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            border: 1px solid #dce8f2;
+            text-align: center;
+        }
+        .takeaway-card .emoji {
+            font-size: 1.8rem;
+            display: block;
+        }
+        .takeaway-card strong {
+            display: block;
+            color: #003757;
+            font-size: 0.95rem;
+        }
+        .takeaway-card small {
+            color: #3e6b87;
+            font-size: 0.8rem;
+        }
+
         @media (max-width: 700px) {
             .container {
                 padding: 1.5rem;
@@ -400,6 +428,9 @@
             }
             .meta-category {
                 border-radius: 30px;
+            }
+            .takeaway-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -490,13 +521,13 @@
         </h2>
 
         <!-- ============================================================ -->
-        <!-- ACTIVITY 8.1 – with FULL DATASET + RADAR GUIDE + QUESTIONS -->
+        <!-- ACTIVITY 8.1 – 15 min                                         -->
         <!-- ============================================================ -->
         <div class="card-activity">
             <h4>
                 <span class="act-tag">8.1</span>
                 “My life is similar to someone else’s” – radar graphs
-                <span style="font-size:0.75rem; background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; font-weight:500;">20 min</span>
+                <span style="font-size:0.75rem; background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; font-weight:500;">15 min</span>
             </h4>
             <ul>
                 <li>In groups of <strong>8</strong>, define <strong>8 indicators</strong> (e.g., love beach, reading, gaming, etc.). Rate each from 1–5.</li>
@@ -573,7 +604,7 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- ACTIVITY 8.2 – with DISTANCE GUIDE & QUESTIONS               -->
+        <!-- ACTIVITY 8.2 – 30 min                                         -->
         <!-- ============================================================ -->
         <div class="card-activity">
             <h4>
@@ -585,7 +616,7 @@
                 <li>You are a game designer: classify <strong>Dog Lock</strong> and <strong>Pork with gravy</strong> as “Attack” or “Defense”.</li>
                 <li>Use the dataset of 10 characters (damage/sec, health, group).</li>
                 <li>Calculate Euclidean distance from the new character to all existing ones.</li>
-                <li>Apply K‑NN (try K = 1, 3, 5) to assign a group.</li>
+                <li>Apply K‑NN (try K = 1, 3, or 5) to assign a group.</li>
             </ul>
 
             <!-- ---- HOW TO CALCULATE & INTERPRET DISTANCE ---- -->
@@ -668,7 +699,7 @@
         </div>
 
         <!-- ============================================================ -->
-        <!-- ACTIVITY 8.3 – with FULL GUIDE, RESULTS & QUESTIONS          -->
+        <!-- ACTIVITY 8.3 – 40 min                                         -->
         <!-- ============================================================ -->
         <div class="card-activity">
             <h4>
@@ -798,6 +829,15 @@
             </div>
         </div>
 
+        <!-- ---- WRAP-UP / INTRODUCTION (10 min) ---- -->
+        <div style="background: #eaf3fa; border-radius: 24px; padding: 1.2rem 1.8rem; border: 1px solid #cfe0ed; margin: 1.2rem 0;">
+            <h4 style="margin-top:0; color:#003757;">⏱️ 10 min – Introduction &amp; Wrap‑up</h4>
+            <ul>
+                <li><strong>Introduction (5 min):</strong> Your teacher will introduce the lesson and explain how these activities connect to real‑world classification problems.</li>
+                <li><strong>Wrap‑up (5 min):</strong> Together with your teacher, summarise the key takeaways and discuss which K value worked best for each dataset.</li>
+            </ul>
+        </div>
+
         <hr>
 
         <!-- ===== DATASETS for 8.2 & 8.3 ===== -->
@@ -847,12 +887,12 @@
         <hr>
 
         <!-- ============================================================ -->
-        <!-- NEW SECTION: WHERE DOES THE K COME IN?                       -->
+        <!-- WHERE DOES THE K COME IN?                                     -->
         <!-- ============================================================ -->
         <div class="k-connection">
             <h3>🤔 Where does the <span style="background:#1d4e6f; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:1.1rem;">K</span> come in?</h3>
             <p style="font-size:1.05rem; margin-bottom:0.8rem;">
-                You've probably noticed — the radar graph and distance calculations don't mention <strong>K</strong> at all. So where does it fit?
+                You've probably noticed the radar graph and distance calculations don't mention <strong>K</strong> at all. So where does it fit?
             </p>
 
             <div class="analogy-box">
@@ -897,7 +937,9 @@
 
         <hr>
 
-        <!-- choosing K -->
+        <!-- ============================================================ -->
+        <!-- CHOOSING THE RIGHT K – ENHANCED                               -->
+        <!-- ============================================================ -->
         <h2>
             ⚖️ Choosing the right K
             <span class="category-pill">trade‑offs</span>
@@ -908,14 +950,38 @@
             <li><strong>Best practice:</strong> test several K values on a validation set and pick the one with highest accuracy.</li>
         </ul>
         <div class="highlight-box" style="margin-top: 0.5rem;">
-            💡 In Activity 8.3 you compared K = 3, 5, and 7 — which one gave the best accuracy for the wildfire data?
+            💡 In Activity 8.3 you compared K = 3, 5, and 7 — which one gave the best accuracy for the wildfire data?<br>
+            <span style="background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; display:inline-block; margin-top:0.3rem;">
+                📌 For example: if K=1, the prediction would be based on just the single closest day, which might be an outlier. If K=7, the prediction is based on a larger group, which smooths out unusual data points.
+            </span>
         </div>
 
-        <!-- summary -->
+        <!-- ============================================================ -->
+        <!-- SUMMARY – with visual takeaways                               -->
+        <!-- ============================================================ -->
         <h2>
             📌 Summary
             <span class="category-pill">key takeaways</span>
         </h2>
+
+        <div class="takeaway-grid">
+            <div class="takeaway-card">
+                <span class="emoji">🔍</span>
+                <strong>Activity 8.1</strong>
+                <small>“Looks can be deceiving, but they build intuition.”</small>
+            </div>
+            <div class="takeaway-card">
+                <span class="emoji">📐</span>
+                <strong>Activity 8.2</strong>
+                <small>“Distance is the language of similarity.”</small>
+            </div>
+            <div class="takeaway-card">
+                <span class="emoji">⚖️</span>
+                <strong>Activity 8.3</strong>
+                <small>“The best K is the one you test and prove.”</small>
+            </div>
+        </div>
+
         <ul>
             <li><strong>Categorical prediction</strong> assigns a label (category) to new data.</li>
             <li><strong>K‑NN</strong> uses distance to find the K most similar data points and takes a majority vote.</li>
