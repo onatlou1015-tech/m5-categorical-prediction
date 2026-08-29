@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>K-NN · Categorical Prediction – Student Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            background: #f0f4f9;
+            color: #162b3a;
+            line-height: 1.6;
+            padding: 2rem 1.2rem;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 40px;
+            box-shadow: 0 25px 60px rgba(0, 20, 40, 0.10);
+            padding: 2.6rem 3rem;
+            transition: all 0.2s;
+        }
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e6edf6;
+            color: #1d4e6f;
+            font-weight: 600;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 0.3rem 1.2rem 0.3rem 1rem;
+            border-radius: 60px;
+            margin-bottom: 0.6rem;
+            border: 1px solid #c4d7e8;
+        }
+        .category-badge span {
+            background: #1d4e6f;
+            color: white;
+            border-radius: 30px;
+            padding: 0.1rem 0.6rem;
+            font-size: 0.6rem;
+        }
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #0b2b3f;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem 1rem;
+            margin-bottom: 0.2rem;
+        }
+        h1 .knn-tag {
+            background: #1d4e6f;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            letter-spacing: 0.3px;
+        }
+        .subhead {
+            font-size: 1.1rem;
+            color: #2e5a77;
+            background: #f0f7fe;
+            padding: 0.7rem 1.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            margin: 0.2rem 0 1.8rem 0;
+            border-left: 4px solid #2d7da3;
+        }
+        .meta-category {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 2.5rem;
+            background: #eaf2f9;
+            padding: 0.8rem 1.8rem;
+            border-radius: 60px;
+            margin-bottom: 2.2rem;
+            font-weight: 500;
+            color: #1a4b66;
+            border: 1px solid #d2e2ee;
+        }
+        .meta-category span {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .meta-category i {
+            font-style: normal;
+            background: #c6d9e9;
+            width: 28px;
+            height: 28px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0 1.8rem 0;
+        }
+        .cat-card {
+            background: #f6faff;
+            border: 1px solid #dce8f2;
+            border-radius: 24px;
+            padding: 1rem 1.2rem;
+            transition: 0.15s;
+            box-shadow: 0 4px 8px rgba(0, 20, 30, 0.02);
+        }
+        .cat-card:hover {
+            border-color: #8fb8d4;
+            background: #fafdff;
+        }
+        .cat-card .emoji-big {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .cat-card strong {
+            color: #124a66;
+            display: block;
+            font-size: 1rem;
+        }
+        .cat-card small {
+            color: #3e6b87;
+            font-size: 0.85rem;
+        }
+        hr {
+            border: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #c0d6e6, #e5eef7);
+            margin: 2.2rem 0;
+        }
+        h2 {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin: 2rem 0 0.8rem 0;
+            color: #0a334a;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        h2 .category-pill {
+            background: #dce9f3;
+            padding: 0.1rem 1rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1d5c7e;
+        }
+        h3 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 1.8rem 0 0.6rem 0;
+            color: #124a66;
+        }
+        h4 {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 1.2rem 0 0.2rem 0;
+            color: #1e5c7a;
+        }
+        ul,
+        ol {
+            padding-left: 1.6rem;
+            margin: 0.5rem 0 1rem 0;
+        }
+        li {
+            margin-bottom: 0.3rem;
+        }
+        .highlight-box {
+            background: #e5f0f9;
+            border-radius: 24px;
+            padding: 1.2rem 1.8rem;
+            margin: 1.8rem 0;
+            border-left: 6px solid #1f6d97;
+            box-shadow: 0 2px 8px rgba(0, 30, 50, 0.03);
+        }
+        .highlight-box strong {
+            color: #003757;
+        }
+        .code-block {
+            background: #14232e;
+            color: #e3f0fa;
+            padding: 0.8rem 1.4rem;
+            border-radius: 16px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            margin: 0.5rem 0 1.2rem 0;
+            border: 1px solid #2a4b60;
+        }
+        .card-activity {
+            background: #fafdff;
+            border: 1px solid #dde9f2;
+            border-radius: 24px;
+            padding: 1.3rem 1.8rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 14px rgba(0, 20, 30, 0.02);
+            transition: 0.1s;
+            border-left: 4px solid transparent;
+        }
+        .card-activity:hover {
+            border-left-color: #2d7da3;
+            background: #f8fcff;
+        }
+        .card-activity h4 {
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .card-activity .act-tag {
+            background: #bbd7eb;
+            padding: 0.1rem 0.9rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #003a57;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 1rem 0 1.5rem 0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 20, 30, 0.04);
+        }
+        th {
+            background: #dce9f2;
+            color: #002b42;
+            font-weight: 600;
+            padding: 0.7rem 0.9rem;
+            text-align: left;
+        }
+        td {
+            background: white;
+            padding: 0.7rem 0.9rem;
+            border-bottom: 1px solid #e5edf4;
+        }
+        tr:last-child td {
+            border-bottom: 0;
+        }
+        .table-new-row {
+            background: #eaf3fa;
+            font-weight: 500;
+        }
+        .footnote {
+            font-size: 0.9rem;
+            color: #2a5a77;
+            background: #eef5fb;
+            padding: 0.8rem 1.6rem;
+            border-radius: 60px;
+            margin-top: 2rem;
+            border: 1px solid #cfe0ed;
+        }
+        .data-box {
+            background: #f6faff;
+            border-radius: 20px;
+            padding: 1rem 1.5rem;
+            border: 1px solid #dce8f2;
+            margin: 0.8rem 0 1.2rem 0;
+            overflow-x: auto;
+        }
+        .data-box table {
+            box-shadow: none;
+            margin: 0.2rem 0;
+        }
+        .data-box table th {
+            background: #e3eef7;
+        }
+
+        /* ---- radar guide specific ---- */
+        .radar-guide {
+            background: #f1f8ff;
+            border-radius: 24px;
+            padding: 1.5rem 2rem;
+            border: 1px solid #cfe0ed;
+            margin: 1.2rem 0 0.8rem 0;
+        }
+        .radar-guide h4 {
+            margin-top: 0;
+            color: #0a3b57;
+        }
+        .radar-guide ul {
+            margin-bottom: 0.2rem;
+        }
+        .question-box {
+            background: #fafdff;
+            border-radius: 20px;
+            padding: 1rem 1.6rem;
+            border-left: 5px solid #1d6f9c;
+            margin: 0.8rem 0;
+        }
+        .question-box strong {
+            color: #003757;
+        }
+
+        /* distance guide specific */
+        .distance-guide {
+            background: #f2f8fe;
+            border-radius: 20px;
+            padding: 1.2rem 1.8rem;
+            border: 1px solid #cfe0ed;
+            margin: 0.8rem 0;
+        }
+        .distance-guide .step {
+            display: flex;
+            gap: 0.8rem;
+            margin-bottom: 0.6rem;
+            align-items: flex-start;
+        }
+        .distance-guide .step-num {
+            background: #1d4e6f;
+            color: white;
+            border-radius: 40px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        /* results box */
+        .results-box {
+            background: #eaf3fa;
+            border-radius: 20px;
+            padding: 1rem 1.6rem;
+            border: 2px solid #8fb8d4;
+            margin: 0.8rem 0;
+        }
+        .results-box strong {
+            color: #003757;
+        }
+
+        /* ---- NEW: K connection explanation ---- */
+        .k-connection {
+            background: #f0f7ff;
+            border-radius: 24px;
+            padding: 1.8rem 2.2rem;
+            border: 2px solid #1d6f9c;
+            margin: 2rem 0 1.5rem 0;
+            box-shadow: 0 4px 16px rgba(29, 111, 156, 0.08);
+        }
+        .k-connection h3 {
+            margin-top: 0;
+            color: #003757;
+            font-size: 1.4rem;
+        }
+        .k-connection .analogy-box {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem 1.6rem;
+            border-left: 5px solid #1d6f9c;
+            margin: 0.8rem 0;
+        }
+        .k-connection table {
+            box-shadow: none;
+            border: 1px solid #dce8f2;
+            margin: 0.8rem 0 0.2rem 0;
+        }
+        .k-connection table th {
+            background: #dce9f2;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .cat-grid {
+                grid-template-columns: 1fr;
+            }
+            .meta-category {
+                border-radius: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- category badge -->
+        <div class="category-badge">
+            <span>⏺</span> categorical prediction · K‑NN <span>grade 11</span>
+        </div>
+
+        <h1>
+            K‑Nearest Neighbors
+            <span class="knn-tag">K‑NN</span>
+        </h1>
+        <div class="subhead">
+            ⏱️ 100 minutes · classify · predict · evaluate
+        </div>
+
+        <!-- category themed meta -->
+        <div class="meta-category">
+            <span><i>🎯</i> Understand K‑NN &amp; categorical prediction</span>
+            <span><i>📊</i> Use distance to classify new data</span>
+            <span><i>✅</i> Find the best K value</span>
+        </div>
+
+        <!-- category cards -->
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-top: 0.2rem;">
+            <span style="background: #1d4e6f; width: 8px; height: 8px; border-radius: 20px; display: inline-block;"></span>
+            <span style="font-weight: 600; color: #0a334a; letter-spacing: 0.2px;">CATEGORY · PREDICTION</span>
+        </div>
+
+        <div class="cat-grid">
+            <div class="cat-card">
+                <span class="emoji-big">🏷️</span>
+                <strong>Categorical output</strong>
+                <small>Predict a label, not a number. e.g., “Attack” vs “Defense”, “Fire” vs “No fire”.</small>
+            </div>
+            <div class="cat-card">
+                <span class="emoji-big">📐</span>
+                <strong>Distance matters</strong>
+                <small>Euclidean distance measures how “close” two data points are in feature space.</small>
+            </div>
+            <div class="cat-card">
+                <span class="emoji-big">👥</span>
+                <strong>K nearest neighbours</strong>
+                <small>The new point takes the majority class of its K closest neighbours.</small>
+            </div>
+            <div class="cat-card">
+                <span class="emoji-big">⚖️</span>
+                <strong>Choose K wisely</strong>
+                <small>Small K = sensitive to noise; large K = smoother but may underfit.</small>
+            </div>
+        </div>
+
+        <!-- core idea -->
+        <h2>
+            🔍 Core idea
+            <span class="category-pill">“birds of a feather”</span>
+        </h2>
+        <p style="font-size: 1.05rem;">K‑NN is built on a simple intuition: <strong>similar things are close to each other</strong>. By measuring the distance between data points, we can look at the K nearest neighbours and see what category they belong to — then assign that category to the new point.</p>
+
+        <div class="highlight-box">
+            <strong>⭐ The K‑NN algorithm in 6 steps:</strong><br>
+            1. Choose K (number of neighbours).<br>
+            2. Calculate the distance from the new point to every point in the training data.<br>
+            3. Sort distances from smallest to largest.<br>
+            4. Pick the K closest neighbours.<br>
+            5. Count how many of those neighbours are in each category.<br>
+            6. Assign the category with the majority vote.
+        </div>
+
+        <div style="background: #e6f0f7; padding: 1rem 1.6rem; border-radius: 24px; margin: 1rem 0;">
+            <strong>📐 Euclidean distance</strong> (between point A and point B):<br>
+            <code style="background: #14232e; color: #d4eaf5; padding: 0.2rem 0.8rem; border-radius: 30px; display: inline-block; margin-top: 0.3rem; font-size: 0.95rem;">
+                d = √( (x₂ − x₁)² + (y₂ − y₁)² )
+            </code>
+        </div>
+
+        <hr>
+
+        <!-- ===== ACTIVITIES ===== -->
+        <h2>
+            📋 Activities
+            <span class="category-pill">learn by doing</span>
+        </h2>
+
+        <!-- ============================================================ -->
+        <!-- ACTIVITY 8.1 – with FULL DATASET + RADAR GUIDE + QUESTIONS -->
+        <!-- ============================================================ -->
+        <div class="card-activity">
+            <h4>
+                <span class="act-tag">8.1</span>
+                “My life is similar to someone else’s” – radar graphs
+                <span style="font-size:0.75rem; background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; font-weight:500;">20 min</span>
+            </h4>
+            <ul>
+                <li>In groups of <strong>8</strong>, define <strong>8 indicators</strong> (e.g., love beach, reading, gaming, etc.). Rate each from 1–5.</li>
+                <li>Create a <strong>radar graph</strong> in Google Sheets (Insert → Chart → Radar). Use row 1 as headers, column A as labels.</li>
+                <li>Compare graphs — whose life is most similar to yours? This builds intuition for “closeness” in multi‑dimensions.</li>
+            </ul>
+
+            <!-- ---- HOW TO READ A RADAR GRAPH ---- -->
+            <div class="radar-guide">
+                <h4>📊 How to read a radar graph</h4>
+                <ul>
+                    <li><strong>Each axis</strong> represents one indicator (e.g., “Likes beach”, “Likes gaming”).</li>
+                    <li><strong>Each polygon</strong> represents one person. The further the point is from the centre, the <strong>higher</strong> their rating (1 = centre, 5 = outer edge).</li>
+                    <li><strong>Similar shapes</strong> mean similar preferences. If two polygons overlap closely, those two people have very similar lifestyles.</li>
+                    <li><strong>Area of the polygon</strong> gives a rough sense of overall “intensity” – a larger area means higher ratings across many indicators.</li>
+                </ul>
+                <div style="margin-top: 0.6rem; font-size: 0.9rem; background: #e5f0f9; padding: 0.4rem 1rem; border-radius: 40px; display: inline-block;">
+                    💡 <strong>Key insight:</strong> In K‑NN, we use distance instead of visual overlap, but the idea is the same — closer = more similar.
+                </div>
+            </div>
+
+            <!-- ---- GUIDING QUESTIONS ---- -->
+            <div style="margin-top: 0.8rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                    <span style="background: #1d4e6f; width: 6px; height: 6px; border-radius: 20px; display: inline-block;"></span>
+                    <span style="font-weight: 600; color: #0a334a; font-size: 0.95rem;">❓ Guiding questions for your group</span>
+                </div>
+                <div class="question-box">
+                    <strong>1.</strong> Which two students have the most similar radar shapes? Why do you think that is?<br>
+                    <strong>2.</strong> Which student has the largest overall area? What does that tell you about their lifestyle?<br>
+                    <strong>3.</strong> If you had to place a new student (with ratings: beach=4, movies=3, food=5, mountains=2, gaming=4, sports=3, reading=5, photo=4) — who would they be most similar to?<br>
+                    <strong>4.</strong> How does the radar graph help you understand “multi‑dimensional similarity” better than just comparing one indicator at a time?<br>
+                    <strong>5.</strong> If you were to calculate the Euclidean distance between two people using their 8 ratings, what would that distance represent?
+                </div>
+            </div>
+
+            <!-- ---- DATASET FOR 8.1 ---- -->
+            <div style="margin-top: 1.2rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <span style="background: #1d4e6f; width: 6px; height: 6px; border-radius: 20px; display: inline-block;"></span>
+                    <span style="font-weight: 600; color: #0a334a; font-size: 0.95rem;">📊 Sample dataset – 8 students, 8 indicators (rate 1–5)</span>
+                </div>
+                <div class="data-box">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Indicator / Student</th>
+                                <th>Person 1</th>
+                                <th>Person 2</th>
+                                <th>Person 3</th>
+                                <th>Person 4</th>
+                                <th>Person 5</th>
+                                <th>Person 6</th>
+                                <th>Person 7</th>
+                                <th>Person 8</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>🏖️ Likes beach</td><td>3</td><td>4</td><td>2</td><td>5</td><td>3</td><td>4</td><td>2</td><td>5</td></tr>
+                            <tr><td>🎬 Likes movies</td><td>4</td><td>5</td><td>3</td><td>4</td><td>5</td><td>3</td><td>4</td><td>2</td></tr>
+                            <tr><td>🍣 Likes Japanese food</td><td>2</td><td>3</td><td>5</td><td>4</td><td>2</td><td>5</td><td>3</td><td>4</td></tr>
+                            <tr><td>🏔️ Likes mountains</td><td>3</td><td>4</td><td>5</td><td>2</td><td>3</td><td>4</td><td>5</td><td>2</td></tr>
+                            <tr><td>🎮 Likes gaming</td><td>5</td><td>3</td><td>4</td><td>2</td><td>5</td><td>3</td><td>4</td><td>2</td></tr>
+                            <tr><td>⚽ Likes sports</td><td>2</td><td>4</td><td>3</td><td>5</td><td>2</td><td>4</td><td>3</td><td>5</td></tr>
+                            <tr><td>📚 Likes reading</td><td>4</td><td>2</td><td>3</td><td>5</td><td>4</td><td>2</td><td>3</td><td>5</td></tr>
+                            <tr><td>📸 Likes photography</td><td>3</td><td>5</td><td>2</td><td>4</td><td>3</td><td>5</td><td>2</td><td>4</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="background: #e2f0f9; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem; margin-top:0.2rem; display: inline-block;">
+                    📊 <strong>Radar tip:</strong> Copy this data into Google Sheets → Insert → Chart → Radar. Use row 1 as headers, column A as labels.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ACTIVITY 8.2 – with DISTANCE GUIDE & QUESTIONS               -->
+        <!-- ============================================================ -->
+        <div class="card-activity">
+            <h4>
+                <span class="act-tag">8.2</span>
+                “Which group is better?” – game characters
+                <span style="font-size:0.75rem; background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; font-weight:500;">30 min</span>
+            </h4>
+            <ul>
+                <li>You are a game designer: classify <strong>Dog Lock</strong> and <strong>Pork with gravy</strong> as “Attack” or “Defense”.</li>
+                <li>Use the dataset of 10 characters (damage/sec, health, group).</li>
+                <li>Calculate Euclidean distance from the new character to all existing ones.</li>
+                <li>Apply K‑NN (try K = 1, 3, 5) to assign a group.</li>
+            </ul>
+
+            <!-- ---- HOW TO CALCULATE & INTERPRET DISTANCE ---- -->
+            <div class="distance-guide">
+                <h4 style="margin-top:0; color:#0a3b57;">📐 How to use the distance formula – step by step</h4>
+                <p style="margin-bottom:0.6rem;">We want to classify <strong>Dog Lock</strong> (Damage = 36, Health = 165).</p>
+
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <div><strong>Write down the formula:</strong><br>
+                        <code style="background:#14232e; color:#d4eaf5; padding:0.1rem 0.6rem; border-radius:8px;">d = √( (dmg₂ − dmg₁)² + (hp₂ − hp₁)² )</code>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <div><strong>Pick a character to compare with.</strong> Let’s use <strong>Rewind</strong> (Damage = 30, Health = 105).<br>
+                        <span style="background:#eaf3fa; padding:0.1rem 0.6rem; border-radius:12px;">Dog Lock (36, 165)  vs  Rewind (30, 105)</span>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <div><strong>Plug the numbers into the formula:</strong><br>
+                        <code style="background:#14232e; color:#d4eaf5; padding:0.2rem 0.8rem; border-radius:8px; display:inline-block;">
+                            d = √( (30 − 36)² + (105 − 165)² )
+                        </code>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">4</span>
+                    <div><strong>Calculate the differences &amp; square them:</strong><br>
+                        (30 − 36) = <strong>−6</strong> → (−6)² = <strong>36</strong><br>
+                        (105 − 165) = <strong>−60</strong> → (−60)² = <strong>3,600</strong>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">5</span>
+                    <div><strong>Add the squares &amp; take the square root:</strong><br>
+                        36 + 3,600 = 3,636<br>
+                        √3,636 ≈ <strong>60.3</strong>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">6</span>
+                    <div><strong>Interpret the result:</strong><br>
+                        The distance between Dog Lock and Rewind is <strong>60.3</strong>. <br>
+                        <span style="background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; display:inline-block; margin-top:0.2rem;">
+                            💡 <strong>Smaller distance = more similar</strong> (closer in the feature space).
+                        </span>
+                    </div>
+                </div>
+
+                <div style="margin-top:0.8rem; background:#fafdff; border-radius:16px; padding:0.8rem 1.2rem; border:1px solid #dce8f2;">
+                    <strong>📋 Now repeat this for ALL 10 characters.</strong> Then sort the distances from smallest to largest to find the K closest neighbours!
+                </div>
+            </div>
+
+            <!-- ---- GUIDING QUESTIONS for 8.2 ---- -->
+            <div style="margin-top: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                    <span style="background: #1d4e6f; width: 6px; height: 6px; border-radius: 20px; display: inline-block;"></span>
+                    <span style="font-weight: 600; color: #0a334a; font-size: 0.95rem;">❓ Questions to guide your analysis</span>
+                </div>
+                <div class="question-box">
+                    <strong>1.</strong> Which character is closest to Dog Lock? What group do they belong to?<br>
+                    <strong>2.</strong> For K=3, what are the groups of the 3 nearest neighbours? What is the majority vote?<br>
+                    <strong>3.</strong> For K=5, does the classification change? Why might that happen?<br>
+                    <strong>4.</strong> If Dog Lock has very similar stats to both Attack and Defense characters, what does that tell you about the decision boundary?<br>
+                    <strong>5.</strong> Repeat the process for <strong>Pork with gravy</strong> (Damage=50, Health=145). Is the classification the same or different? Why?
+                </div>
+            </div>
+
+            <div style="background:#e2f0f9; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem; margin-top:0.4rem; display: inline-block;">
+                📐 <strong>Distance formula:</strong> √( (dmg₂ − dmg₁)² + (hp₂ − hp₁)² )
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- ACTIVITY 8.3 – with FULL GUIDE, RESULTS & QUESTIONS          -->
+        <!-- ============================================================ -->
+        <div class="card-activity">
+            <h4>
+                <span class="act-tag">8.3</span>
+                “K Who is more accurate?” – wildfire prediction
+                <span style="font-size:0.75rem; background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; font-weight:500;">40 min</span>
+            </h4>
+            <ul>
+                <li>Predict wildfire risk for <strong>temperature = 18°C, humidity = 44%</strong> using the 8‑day dataset.</li>
+                <li>Calculate distances, sort, then count “Yes” vs “No” among the K nearest neighbours.</li>
+                <li><strong>Test your K value</strong> (3, 5, or 7) on 5 test cases. Compare with other groups to find the most accurate K.</li>
+            </ul>
+
+            <!-- ---- STEP-BY-STEP GUIDE FOR 8.3 ---- -->
+            <div class="distance-guide">
+                <h4 style="margin-top:0; color:#0a3b57;">📋 Step-by-step guide for Activity 8.3</h4>
+
+                <div class="step">
+                    <span class="step-num">1</span>
+                    <div><strong>Identify the new point to classify:</strong><br>
+                        Temperature = <strong>18°C</strong>, Humidity = <strong>44%</strong>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <div><strong>Calculate the distance</strong> from the new point to EACH of the 8 training days using:<br>
+                        <code style="background:#14232e; color:#d4eaf5; padding:0.1rem 0.6rem; border-radius:8px;">d = √( (temp₂ − temp₁)² + (hum₂ − hum₁)² )</code>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <div><strong>Record your distances</strong> in the distance column of the table.</div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">4</span>
+                    <div><strong>Sort the data</strong> by distance from smallest to largest (use Excel/Sheets: Sort &amp; Filter → Filter → Sort Smallest to Largest).</div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">5</span>
+                    <div><strong>For K=3:</strong> Look at the 3 closest neighbours. Count how many are “Yes” (fire) and how many are “No” (no fire). Assign the majority class.</div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">6</span>
+                    <div><strong>Repeat for K=5 and K=7.</strong> Record your results in the table.</div>
+                </div>
+
+                <div class="step">
+                    <span class="step-num">7</span>
+                    <div><strong>Test your chosen K value</strong> on the 5 test cases. Compare your predictions with the actual results to calculate accuracy.</div>
+                </div>
+            </div>
+
+            <!-- ---- EXPECTED RESULTS ---- -->
+            <div class="results-box">
+                <h4 style="margin-top:0.2rem; color:#003757;">📊 Expected results (approximate distances from 18°C, 44%)</h4>
+                <table style="margin:0.5rem 0 0.2rem 0; box-shadow:none;">
+                    <thead>
+                        <tr><th>Day</th><th>Temp</th><th>Humidity</th><th>Distance</th><th>Fire?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>3</td><td>18.2</td><td>46</td><td>≈ 2.01</td><td>Yes</td></tr>
+                        <tr><td>2</td><td>20.3</td><td>45</td><td>≈ 2.51</td><td>No</td></tr>
+                        <tr><td>4</td><td>19.6</td><td>48</td><td>≈ 4.31</td><td>Yes</td></tr>
+                        <tr><td>1</td><td>22.8</td><td>40</td><td>≈ 6.25</td><td>No</td></tr>
+                        <tr><td>6</td><td>17.8</td><td>51</td><td>≈ 7.00</td><td>No</td></tr>
+                        <tr><td>5</td><td>24.1</td><td>29</td><td>≈ 16.19</td><td>Yes</td></tr>
+                        <tr><td>7</td><td>17.7</td><td>25</td><td>≈ 19.00</td><td>Yes</td></tr>
+                        <tr><td>8</td><td>28.6</td><td>27</td><td>≈ 20.03</td><td>No</td></tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:0.5rem; background:#fafdff; padding:0.5rem 1rem; border-radius:16px; border:1px solid #dce8f2;">
+                    <strong>Classification results:</strong><br>
+                    • K=3: 2 Yes, 1 No → <strong>Yes</strong> (fire likely)<br>
+                    • K=5: 3 Yes, 2 No → <strong>Yes</strong> (fire likely)<br>
+                    • K=7: 4 Yes, 3 No → <strong>Yes</strong> (fire likely)<br>
+                    <span style="background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; display:inline-block; margin-top:0.2rem;">
+                        💡 All K values predict “Yes” for this point, but the confidence varies.
+                    </span>
+                </div>
+            </div>
+
+            <!-- ---- TEST DATA & ACCURACY ---- -->
+            <div style="margin-top: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                    <span style="background: #1d4e6f; width: 6px; height: 6px; border-radius: 20px; display: inline-block;"></span>
+                    <span style="font-weight: 600; color: #0a334a; font-size: 0.95rem;">📋 Test dataset (5 cases) – compare your predictions</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr><th>Test Case</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Actual Fire?</th><th>Your Prediction</th><th>Correct?</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>29.6</td><td>27</td><td>No</td><td style="background:#fafdff;">______</td><td style="background:#fafdff;">______</td></tr>
+                        <tr><td>2</td><td>19.3</td><td>38</td><td>Yes</td><td style="background:#fafdff;">______</td><td style="background:#fafdff;">______</td></tr>
+                        <tr><td>3</td><td>17.8</td><td>56</td><td>No</td><td style="background:#fafdff;">______</td><td style="background:#fafdff;">______</td></tr>
+                        <tr><td>4</td><td>25.1</td><td>27</td><td>No</td><td style="background:#fafdff;">______</td><td style="background:#fafdff;">______</td></tr>
+                        <tr><td>5</td><td>30.2</td><td>24</td><td>No</td><td style="background:#fafdff;">______</td><td style="background:#fafdff;">______</td></tr>
+                    </tbody>
+                </table>
+                <div style="background:#e5f0f9; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem; margin-top:0.3rem; display: inline-block;">
+                    📊 <strong>Calculate accuracy:</strong> (Number of correct predictions ÷ 5) × 100
+                </div>
+            </div>
+
+            <!-- ---- GUIDING QUESTIONS for 8.3 ---- -->
+            <div style="margin-top: 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
+                    <span style="background: #1d4e6f; width: 6px; height: 6px; border-radius: 20px; display: inline-block;"></span>
+                    <span style="font-weight: 600; color: #0a334a; font-size: 0.95rem;">❓ Questions to guide your analysis</span>
+                </div>
+                <div class="question-box">
+                    <strong>1.</strong> Which K value (3, 5, or 7) gave the highest accuracy on the test set? Why do you think that is?<br>
+                    <strong>2.</strong> Did all K values predict the same class for the new point (18°C, 44%)? What does that tell you about the data?<br>
+                    <strong>3.</strong> If you used K=1, would the prediction change? How might that affect accuracy?<br>
+                    <strong>4.</strong> What is the trade‑off between using a small K vs a large K? When would you prefer one over the other?<br>
+                    <strong>5.</strong> Based on your results, which K value would you recommend for this wildfire dataset? Justify your answer.
+                </div>
+            </div>
+
+            <div style="background:#e2f0f9; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem; margin-top:0.4rem; display: inline-block;">
+                📌 <strong>Excel tip:</strong> highlight data → Sort &amp; Filter → Filter → sort distance “Smallest to Largest”.
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- ===== DATASETS for 8.2 & 8.3 ===== -->
+        <h2>
+            📊 Datasets
+            <span class="category-pill">training &amp; test</span>
+        </h2>
+
+        <h3>🎮 Activity 8.2 – game characters (partial)</h3>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead><tr><th>Character</th><th>Damage/sec</th><th>Health</th><th>Group</th></tr></thead>
+                <tbody>
+                    <tr><td>Rewind</td><td>30</td><td>105</td><td>Attack</td></tr>
+                    <tr><td>Sriprai</td><td>20</td><td>185</td><td>Defense</td></tr>
+                    <tr><td>Toilet</td><td>35</td><td>120</td><td>Attack</td></tr>
+                    <tr><td>Leukemia</td><td>50</td><td>90</td><td>Attack</td></tr>
+                    <tr><td>Fried pork</td><td>25</td><td>150</td><td>Defense</td></tr>
+                    <tr><td>Intimate</td><td>18</td><td>40</td><td>Defense</td></tr>
+                    <tr><td>City</td><td>40</td><td>130</td><td>Attack</td></tr>
+                    <tr><td>Sprain</td><td>22</td><td>180</td><td>Defense</td></tr>
+                    <tr><td>Thani</td><td>15</td><td>200</td><td>Defense</td></tr>
+                    <tr class="table-new-row"><td><strong>Dog Lock</strong> (new)</td><td>36</td><td>165</td><td style="background:#eaf3fa;">???</td></tr>
+                    <tr class="table-new-row"><td><strong>Pork gravy</strong> (new)</td><td>50</td><td>145</td><td style="background:#eaf3fa;">???</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>🌲 Activity 8.3 – wildfire data (first 8 days)</h3>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead><tr><th>Day</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Fire</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>22.8</td><td>40</td><td>No</td></tr>
+                    <tr><td>2</td><td>20.3</td><td>45</td><td>No</td></tr>
+                    <tr><td>3</td><td>18.2</td><td>46</td><td>Yes</td></tr>
+                    <tr><td>4</td><td>19.6</td><td>48</td><td>Yes</td></tr>
+                    <tr><td>5</td><td>24.1</td><td>29</td><td>Yes</td></tr>
+                    <tr><td>6</td><td>17.8</td><td>51</td><td>No</td></tr>
+                    <tr><td>7</td><td>17.7</td><td>25</td><td>Yes</td></tr>
+                    <tr><td>8</td><td>28.6</td><td>27</td><td>No</td></tr>
+                    <tr class="table-new-row"><td><strong>New</strong></td><td>18.0</td><td>44</td><td style="background:#eaf3fa;">???</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr>
+
+        <!-- ============================================================ -->
+        <!-- NEW SECTION: WHERE DOES THE K COME IN?                       -->
+        <!-- ============================================================ -->
+        <div class="k-connection">
+            <h3>🤔 Where does the <span style="background:#1d4e6f; color:white; padding:0.1rem 1rem; border-radius:40px; font-size:1.1rem;">K</span> come in?</h3>
+            <p style="font-size:1.05rem; margin-bottom:0.8rem;">
+                You've probably noticed — the radar graph and distance calculations don't mention <strong>K</strong> at all. So where does it fit?
+            </p>
+
+            <div class="analogy-box">
+                <strong>💡 Think of it like this:</strong>
+                <ul style="margin-top:0.3rem;">
+                    <li><strong>Radar graph (Activity 8.1)</strong> = “Who <em>looks</em> similar?” — visual intuition</li>
+                    <li><strong>Distance calculation (Activity 8.2)</strong> = “How similar are they <em>exactly</em>?” — numbers</li>
+                    <li><strong>K (Activity 8.3)</strong> = “<em>How many</em> of the most similar people should we ask before deciding?” — the rule</li>
+                </ul>
+            </div>
+
+            <p style="margin:0.8rem 0;"><strong>So the K appears when you DECIDE:</strong> after you have all the distances sorted, you choose how many neighbours to consult.</p>
+
+            <table>
+                <thead>
+                    <tr><th>Activity</th><th>What you do</th><th>Where K appears</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>8.1</strong></td><td>Compare radar shapes visually</td><td>❌ No K yet — building intuition</td></tr>
+                    <tr><td><strong>8.2</strong></td><td>Calculate distances to ALL characters</td><td>❌ No K yet — getting numbers</td></tr>
+                    <tr><td><strong>8.3</strong></td><td>Choose K=3, 5, or 7 and count neighbours</td><td>✅ <strong>K appears here!</strong></td></tr>
+                </tbody>
+            </table>
+
+            <div style="background:#fafdff; border-radius:16px; padding:1rem 1.6rem; border:1px solid #dce8f2; margin-top:0.8rem;">
+                <strong>📌 Quick example — Dog Lock from Activity 8.2:</strong><br>
+                After calculating all distances and sorting them:
+                <ul style="margin-top:0.3rem;">
+                    <li><strong>If K=3:</strong> Look at the 3 closest → 2 Attack, 1 Defense → <strong>Attack</strong></li>
+                    <li><strong>If K=5:</strong> Look at the 5 closest → 3 Attack, 2 Defense → <strong>Attack</strong></li>
+                    <li><strong>If K=7:</strong> Look at the 7 closest → 4 Attack, 3 Defense → <strong>Attack</strong></li>
+                </ul>
+                <span style="background:#e5f0f9; padding:0.1rem 0.8rem; border-radius:30px; display:inline-block; margin-top:0.2rem;">
+                    🎯 The <strong>K</strong> is the number you choose to look at!
+                </span>
+            </div>
+
+            <div style="margin-top:0.8rem; background:#dce9f3; border-radius:16px; padding:0.6rem 1.2rem;">
+                <strong>🔑 Key takeaway:</strong> The radar graph and distance calculations are the <strong>preparation</strong>. The <strong>K</strong> is the <strong>decision rule</strong> you apply <em>after</em> you have the distances.
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- choosing K -->
+        <h2>
+            ⚖️ Choosing the right K
+            <span class="category-pill">trade‑offs</span>
+        </h2>
+        <ul>
+            <li><strong>Small K</strong> (e.g., 1 or 3): more sensitive to noise, can overfit.</li>
+            <li><strong>Large K</strong> (e.g., 7 or 9): smoother decision boundary, but may underfit.</li>
+            <li><strong>Best practice:</strong> test several K values on a validation set and pick the one with highest accuracy.</li>
+        </ul>
+        <div class="highlight-box" style="margin-top: 0.5rem;">
+            💡 In Activity 8.3 you compared K = 3, 5, and 7 — which one gave the best accuracy for the wildfire data?
+        </div>
+
+        <!-- summary -->
+        <h2>
+            📌 Summary
+            <span class="category-pill">key takeaways</span>
+        </h2>
+        <ul>
+            <li><strong>Categorical prediction</strong> assigns a label (category) to new data.</li>
+            <li><strong>K‑NN</strong> uses distance to find the K most similar data points and takes a majority vote.</li>
+            <li><strong>Euclidean distance</strong> measures similarity in multi‑dimensional space.</li>
+            <li>The choice of <strong>K</strong> affects accuracy — test and compare!</li>
+        </ul>
+
+        <!-- final -->
+        <div class="footnote">
+            <strong>✅ Ready to start?</strong> Follow the activities step by step. Work with your group, calculate distances, and discover which K value works best for each dataset.
+        </div>
+
+        <div style="margin-top: 2rem; font-size: 0.8rem; color: #4b6f89; border-top: 1px solid #d2e2ee; padding-top: 1.2rem; text-align: center;">
+            Institute for the Promotion of Teaching Science and Technology (IPST) · Grade 11 · Computational Science
+        </div>
+
+    </div>
+    <!-- container end -->
+</body>
+</html>
