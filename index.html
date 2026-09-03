@@ -416,7 +416,7 @@
             font-size: 0.8rem;
         }
 
-        /* ---- NEW: Real‑world connection section ---- */
+        /* ---- Real‑world connection section ---- */
         .realworld-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -472,6 +472,42 @@
             margin: 0.8rem 0;
         }
 
+        /* ---- NEW: Categorical data intro ---- */
+        .categorical-intro {
+            background: #f2f8fe;
+            border-radius: 24px;
+            padding: 1.8rem 2.2rem;
+            border: 2px solid #8fb8d4;
+            margin: 2rem 0 1.5rem 0;
+            box-shadow: 0 4px 16px rgba(29, 111, 156, 0.06);
+        }
+        .categorical-intro h3 {
+            margin-top: 0;
+            color: #003757;
+            font-size: 1.4rem;
+        }
+        .categorical-intro .example-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.8rem;
+            margin: 0.8rem 0;
+        }
+        .categorical-intro .example-item {
+            background: white;
+            border-radius: 14px;
+            padding: 0.7rem 1.2rem;
+            border: 1px solid #dce8f2;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .categorical-intro .example-item .ex-emoji {
+            font-size: 1.6rem;
+        }
+        .categorical-intro .example-item strong {
+            color: #003757;
+        }
+
         @media (max-width: 700px) {
             .container {
                 padding: 1.5rem;
@@ -490,6 +526,9 @@
             }
             .realworld-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+            .categorical-intro .example-grid {
+                grid-template-columns: 1fr;
             }
         }
         @media (max-width: 480px) {
@@ -579,7 +618,55 @@
         <hr>
 
         <!-- ============================================================ -->
-        <!-- NEW: REAL‑WORLD CONNECTION SECTION                           -->
+        <!-- NEW: WHAT IS CATEGORICAL DATA?                               -->
+        <!-- ============================================================ -->
+        <div class="categorical-intro">
+            <h3>🏷️ What is categorical data?</h3>
+            <p style="font-size:1.05rem; margin-bottom:0.8rem;">
+                <strong>Categorical data</strong> (also called <strong>qualitative data</strong>) represents <strong>categories or groups</strong> rather than numerical values. 
+                It answers <strong>"what kind?"</strong> or <strong>"which group?"</strong> — not "how much?" or "how many?"
+            </p>
+
+            <div style="background: white; border-radius: 16px; padding: 1rem 1.6rem; border: 1px solid #dce8f2; margin: 0.8rem 0;">
+                <strong>📌 Two types of categorical data:</strong>
+                <ul style="margin-top:0.3rem;">
+                    <li><strong>Nominal:</strong> Categories with <em>no natural order</em> (e.g., colours, animal types, countries)</li>
+                    <li><strong>Ordinal:</strong> Categories with a <em>meaningful order</em> (e.g., "small", "medium", "large"; "elementary", "high school", "university")</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 0.8rem;">
+                <strong>🌟 5 examples of categorical data:</strong>
+                <div class="example-grid">
+                    <div class="example-item">
+                        <span class="ex-emoji">🐶</span>
+                        <div><strong>Animal type</strong> <small>cat, dog, bird, fish</small></div>
+                    </div>
+                    <div class="example-item">
+                        <span class="ex-emoji">🎨</span>
+                        <div><strong>Favourite colour</strong> <small>red, blue, green, yellow</small></div>
+                    </div>
+                    <div class="example-item">
+                        <span class="ex-emoji">🏫</span>
+                        <div><strong>Education level</strong> <small>primary, secondary, tertiary</small></div>
+                    </div>
+                    <div class="example-item">
+                        <span class="ex-emoji">📱</span>
+                        <div><strong>Phone brand</strong> <small>Apple, Samsung, Huawei, Google</small></div>
+                    </div>
+                    <div class="example-item">
+                        <span class="ex-emoji">🌤️</span>
+                        <div><strong>Weather condition</strong> <small>sunny, rainy, cloudy, snowy</small></div>
+                    </div>
+                </div>
+                <div style="background:#e5f0f9; padding:0.3rem 1rem; border-radius:30px; font-size:0.85rem; display:inline-block; margin-top:0.2rem;">
+                    💡 <strong>Key point:</strong> In K‑NN, we predict <strong>categorical labels</strong> like these — not numbers!
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================ -->
+        <!-- REAL‑WORLD CONNECTION SECTION                                -->
         <!-- ============================================================ -->
         <div class="realworld-connection">
             <h3>🌍 Why are we learning this? – Real‑world connections</h3>
