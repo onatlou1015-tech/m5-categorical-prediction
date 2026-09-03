@@ -416,6 +416,62 @@
             font-size: 0.8rem;
         }
 
+        /* ---- NEW: Real‑world connection section ---- */
+        .realworld-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0 1.5rem 0;
+        }
+        .realworld-card {
+            background: #f6faff;
+            border-radius: 18px;
+            padding: 1rem 1.2rem;
+            border: 1px solid #dce8f2;
+            transition: 0.15s;
+            text-align: center;
+        }
+        .realworld-card:hover {
+            border-color: #8fb8d4;
+            background: #fafdff;
+            transform: translateY(-2px);
+        }
+        .realworld-card .rw-emoji {
+            font-size: 2.2rem;
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+        .realworld-card strong {
+            color: #003757;
+            display: block;
+            font-size: 0.95rem;
+        }
+        .realworld-card small {
+            color: #3e6b87;
+            font-size: 0.8rem;
+        }
+
+        .realworld-connection {
+            background: #f0f7ff;
+            border-radius: 24px;
+            padding: 1.8rem 2.2rem;
+            border: 2px solid #1d6f9c;
+            margin: 2rem 0 1.5rem 0;
+            box-shadow: 0 4px 16px rgba(29, 111, 156, 0.08);
+        }
+        .realworld-connection h3 {
+            margin-top: 0;
+            color: #003757;
+            font-size: 1.4rem;
+        }
+        .realworld-connection .activity-match {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem 1.6rem;
+            border-left: 5px solid #1d6f9c;
+            margin: 0.8rem 0;
+        }
+
         @media (max-width: 700px) {
             .container {
                 padding: 1.5rem;
@@ -430,6 +486,14 @@
                 border-radius: 30px;
             }
             .takeaway-grid {
+                grid-template-columns: 1fr;
+            }
+            .realworld-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 480px) {
+            .realworld-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -510,6 +574,59 @@
             <code style="background: #14232e; color: #d4eaf5; padding: 0.2rem 0.8rem; border-radius: 30px; display: inline-block; margin-top: 0.3rem; font-size: 0.95rem;">
                 d = √( (x₂ − x₁)² + (y₂ − y₁)² )
             </code>
+        </div>
+
+        <hr>
+
+        <!-- ============================================================ -->
+        <!-- NEW: REAL‑WORLD CONNECTION SECTION                           -->
+        <!-- ============================================================ -->
+        <div class="realworld-connection">
+            <h3>🌍 Why are we learning this? – Real‑world connections</h3>
+            <p style="font-size:1.05rem; margin-bottom:0.8rem;">
+                K‑NN isn't just for games or wildfires — it's used every day in industries you interact with!
+            </p>
+
+            <div class="realworld-grid">
+                <div class="realworld-card">
+                    <span class="rw-emoji">🎬</span>
+                    <strong>Netflix &amp; Spotify</strong>
+                    <small>Recommend movies or songs based on what similar users liked.</small>
+                </div>
+                <div class="realworld-card">
+                    <span class="rw-emoji">🏦</span>
+                    <strong>Banking &amp; Finance</strong>
+                    <small>Detect fraudulent transactions by finding "unusual" data points far from normal clusters.</small>
+                </div>
+                <div class="realworld-card">
+                    <span class="rw-emoji">🏥</span>
+                    <strong>Medical Diagnosis</strong>
+                    <small>Classify tumours as benign or malignant based on patient data.</small>
+                </div>
+                <div class="realworld-card">
+                    <span class="rw-emoji">🛒</span>
+                    <strong>E‑commerce</strong>
+                    <small>Suggest products to customers based on what similar buyers purchased.</small>
+                </div>
+                <div class="realworld-card">
+                    <span class="rw-emoji">🤖</span>
+                    <strong>Computer Vision</strong>
+                    <small>Recognise handwritten digits or classify objects in images.</small>
+                </div>
+            </div>
+
+            <div class="activity-match">
+                <strong>🔗 How our activities connect:</strong>
+                <ul style="margin-top:0.3rem;">
+                    <li><strong>Activity 8.1 (Radar graphs)</strong> → Building intuition for "similarity" — just like how Netflix looks at your viewing history to find similar users.</li>
+                    <li><strong>Activity 8.2 (Game characters)</strong> → Using distance to classify — just like how a bank uses transaction patterns to classify "fraud" or "not fraud".</li>
+                    <li><strong>Activity 8.3 (Wildfire prediction)</strong> → Testing different K values to find the best model — just like how doctors test different models to improve diagnostic accuracy.</li>
+                </ul>
+            </div>
+
+            <div style="margin-top:0.8rem; background:#dce9f3; border-radius:16px; padding:0.6rem 1.2rem;">
+                <strong>💡 Key insight:</strong> The skills you're learning here — measuring similarity, calculating distances, and choosing the right K — are the <strong>same foundations</strong> used by data scientists at Google, Amazon, and hospitals around the world!
+            </div>
         </div>
 
         <hr>
